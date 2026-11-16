@@ -1,0 +1,99 @@
+class Library:
+
+    def __init__(self):
+        self.borrowing_records = {}
+        self.book_borrow_counts = {}
+
+    def add_member(self, member_name):
+        if member_name not in self.borrowing_records:
+            self.borrowing_records[member_name] = []
+
+    def borrow_book(self, member_name, book_title):
+        if member_name not in self.borrowing_records:
+            self.add_member(member_name)
+
+        self.borrowing_records[member_name].append(book_title)
+
+        if book_title not in self.book_borrow_counts:
+            self.book_borrow_counts[book_title] = 0
+
+        self.book_borrow_counts[book_title] += 1
+
+    def compute_average_books(self):
+        total_books = sum(
+            len(books) for books in self.borrowing_records.values()
+        )
+
+        total_members = len(self.borrowing_records)
+
+        if total_members == 0:
+            return 0
+
+        return total_books / total_members
+
+    def find_highest_and_lowest_borrowed_books(self):
+
+        if not self.book_borrow_counts:
+            return [], []
+
+        highest_count = max(self.book_borrow_counts.values())
+        lowest_count = min(self.book_borrow_counts.values())
+
+        highest = [
+            book for book, count in self.book_borrow_counts.items()
+            if count == highest_count
+        ]
+
+        lowest = [
+            book for book, count in self.book_borrow_counts.items()
+            if count == lowest_count
+        ]
+
+        return highest, lowest
+
+    def count_members_with_no_borrowings(self):
+        return sum(
+            1 for books in self.borrowing_records.values()
+            if len(books) == 0
+        )
+
+    def most_frequently_borrowed_book(self):
+
+        if not self.book_borrow_counts:
+            return []
+
+        max_count = max(self.book_borrow_counts.values())
+
+        return [
+            book for book, count in self.book_borrow_counts.items()
+            if count == max_count
+        ]
+
+
+# Example Usage
+
+library = Library()
+
+library.add_member("Alice")
+library.add_member("Bob")
+library.add_member("Charlie")
+
+library.borrow_book("Alice", "Book A")
+library.borrow_book("Alice", "Book B")
+library.borrow_book("Bob", "Book A")
+library.borrow_book("Bob", "Book C")
+library.borrow_book("Charlie", "Book A")
+
+print("Average number of books borrowed:",
+      library.compute_average_books())
+
+highest, lowest = library.find_highest_and_lowest_borrowed_books()
+
+print("Most borrowed book:", highest)
+print("Least borrowed book:", lowest)
+
+print("Members with no borrowings:",
+      library.count_members_with_no_borrowings())
+
+print("Most frequently borrowed book(s):",
+      library.most_frequently_borrowed_book())
